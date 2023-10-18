@@ -16,6 +16,8 @@ def item1():
 def test_number_of_sim(phone1):
     with pytest.raises(ValueError):
         phone1.number_of_sim = 0
+    with pytest.raises(ValueError):
+        phone1.number_of_sim = "test"
 
 
 def test_str(phone1):
@@ -30,3 +32,6 @@ def test_add(phone1, item1):
     assert item1 + phone1 == 25
     assert phone1 + phone1 == 10
 
+
+def test_get_name(phone1):
+    assert phone1.name == 'iPhone 14'
