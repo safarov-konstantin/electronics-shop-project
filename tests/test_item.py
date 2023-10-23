@@ -1,6 +1,6 @@
 import pytest, os
 from src.item import Item
-from pathlib import Path
+from src.item import InstantiateCSVError
 
 
 @pytest.fixture
@@ -38,8 +38,15 @@ def test_name(item1):
 
 def test_instantiate_from_csv():
     Item.instantiate_from_csv('src/items.csv')
+
     assert len(Item.all) == 5
     assert Item.all[0].name == 'Смартфон'
+
+    with pytest.raises(FileNotFoundError):
+        Item.instantiate_from_csv('src/not_file.csv')
+
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv('src/instantiate_items.csv')
 
 
 def test_string_to_number():

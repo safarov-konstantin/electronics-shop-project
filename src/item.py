@@ -3,6 +3,12 @@ import os
 from pathlib import Path
 
 
+class InstantiateCSVError(Exception):
+
+    def __init__(self, *args, **kwargs):
+        self.massage = args[0] if args else 'Неизвестная ошибка'
+
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -64,18 +70,25 @@ class Item:
         self.price *= self.pay_rate
 
     @classmethod
-    def instantiate_from_csv(cls, path):
+    def instantiate_from_csv(cls, path='src/items.csv'):
         """
         Инициализирующий экземпляры класса Item
         данными из файла по пути path
         """
         # oчищаем свойства класса all
         Item.all.clear()
-
         file_path = os.path.join(Path(__file__).parent.parent, path)
+
+        # Проверка на существование файла
+        if not os.path.isfile(file_path):
+            raise FileNotFoundError('Отсутствует файл item.csv')
+
         with open(file_path) as file:
             data = csv.DictReader(file)
-            [cls(**item) for item in data]
+            try:
+                [cls(**item) for item in data]
+            except TypeError:
+                raise InstantiateCSVError('Файл item.csv поврежден')
 
     @staticmethod
     def string_to_number(str_num: str):
